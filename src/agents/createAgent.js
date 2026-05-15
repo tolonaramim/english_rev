@@ -4,6 +4,8 @@ const { bdtFormat } = require('../skills/bdtFormatter');
 const { coherenceBridge } = require('../skills/coherenceBridge');
 const { calibrateStyle } = require('../skills/styleToneCalibrator');
 const { clarityEdit } = require('../skills/clarityConcisenessEditor');
+const { REVERSE_ORDER_MODE, reverseOrderWriter } = require('../skills/reverseOrderWriter');
+const { normalizeString } = require('../utils/text');
 
 const DEFAULT_MODE_INDEX = 0;
 const DEFAULTS = {
@@ -24,6 +26,16 @@ const resolveMode = (mode) => {
   return match ? match.name : mode;
 };
 
+const resolveOutputDraft = ({ draftCandidate, essayCandidate, isReverseOrder }) => {
+  if (draftCandidate) {
+    return draftCandidate;
+  }
+  if (isReverseOrder) {
+    return essayCandidate;
+  }
+  return '';
+};
+
 const createAgent = ({ name, defaults = {} } = {}) => {
   const resolvedDefaults = {
     ...DEFAULTS,
@@ -38,44 +50,64 @@ const createAgent = ({ name, defaults = {} } = {}) => {
     run(options = {}) {
       const {
         topic,
-        draft,
-        previousTopic,
-        nextTopic,
-        mode,
-        style,
-        tone,
-        transitionMethod,
-        includeLabels = true,
-      } = options;
+      draft,
+      word,
+      sentence,
+      paragraph,
+      essay,
+      previousTopic,
+      nextTopic,
+      mode,
+      style,
+      tone,
+      transitionMethod,
+      includeLabels = true,
+      includeBookContext = true,
+    } = options;
 
-      const analysis = topic ? mdCoder(topic) : null;
-      const transition = coherenceBridge({
-        previousTopic,
-        nextTopic,
-        method: transitionMethod,
+    const resolvedMode = resolveMode(mode);
+    const isReverseOrder = resolvedMode === REVERSE_ORDER_MODE;
+    const analysis = topic ? mdCoder(topic) : null;
+    const transition = coherenceBridge({
+      previousTopic,
+      nextTopic,
+      method: transitionMethod,
+    });
+
+    const draftCandidate = normalizeString(draft);
+    const essayCandidate = normalizeString(essay);
+    const rawOutput = resolveOutputDraft({ draftCandidate, essayCandidate, isReverseOrder });
+    let formattedOutput = rawOutput;
+    let sections = null;
+    const reverseOrder = isReverseOrder
+      ? reverseOrderWriter({
+          word,
+          sentence,
+          paragraph,
+          essay: essayCandidate,
+          topic,
+          includeBookContext,
+        })
+      : null;
+
+    if (rawOutput) {
+      sections = bdtFormat(rawOutput, { includeLabels });
+      formattedOutput = clarityEdit(sections.formatted);
+      formattedOutput = calibrateStyle(formattedOutput, {
+        style: style || resolvedDefaults.style,
+        tone: tone || resolvedDefaults.tone,
       });
+    }
 
-      let output = typeof draft === 'string' ? draft : '';
-      let sections = null;
-
-      if (output) {
-        sections = bdtFormat(output, { includeLabels });
-        output = sections.formatted;
-        output = clarityEdit(output);
-        output = calibrateStyle(output, {
-          style: style || resolvedDefaults.style,
-          tone: tone || resolvedDefaults.tone,
-        });
-      }
-
-      return {
-        mode: resolveMode(mode),
-        analysis,
-        transition,
-        output,
-        sections,
-      };
-    },
+    return {
+      mode: resolvedMode,
+      analysis,
+      transition,
+      reverseOrder,
+      output: formattedOutput,
+      sections,
+    };
+  },
   };
 };
 

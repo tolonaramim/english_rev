@@ -178,6 +178,15 @@ const SKILL_MAP = [
       'writing plan revisited',
     ],
   },
+  {
+    name: 'Reverse Order Writing',
+    items: [
+      'word to sentence',
+      'sentence to paragraph',
+      'paragraph to essay',
+      'reverse order workflow',
+    ],
+  },
 ];
 
 const MODES = SKILL_MAP.map((entry) => entry.name);
