@@ -27,6 +27,9 @@ The full skill map derived from the OCR extract is stored in `src/skillMap.js` a
 - The Real Birth of an Essay
 - The Paragraph: The Basic Unit of Composition
 - The Essay
+- Reverse Order Writing
+
+The OCR text of the full book lives in `src/content/bookText.txt`. You can access parsed pages and search helpers via `content.bookContent`.
 
 Purpose Planning now enumerates checklist items (output type, reader, size/length, time limit, purpose, tone, style), and Idea Development includes expanded idea booster prompts (abilities/capabilities, characteristics, suggestions, dependency/differences/other relevant factors).
 
@@ -57,3 +60,21 @@ console.log(result.output);
 - Coherence Bridge supports `markerSet` (`classic`, `markers`, `reference`) and optional `markerIndex` to select different transition marker styles.
 - Clarity & Conciseness Editor accepts toggles such as `convertPassive`, `replacePhrases`, and `replaceCliches` to control aggressive rewrites.
 - Style & Tone Calibrator accepts `toneProfile` with `subject`, `reader`, `self`, and `purpose` categories for tone profiling in addition to the existing `tone` presets.
+
+### Reverse-order workflow
+
+```js
+const { agents } = require('./src');
+
+const result = agents.claude.run({
+  mode: 'Reverse Order Writing',
+  topic: 'public speaking',
+  word: 'confidence',
+  sentence: 'Confidence helps speakers connect with their listeners.',
+  paragraph: 'Confidence builds trust and keeps attention focused on the message.',
+  essay: 'Confidence helps speakers connect with their listeners. It builds trust and keeps attention focused on the message.',
+});
+
+console.log(result.reverseOrder);
+console.log(result.output);
+```

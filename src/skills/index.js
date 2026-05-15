@@ -13,6 +13,7 @@ const {
   calibrateStyle,
 } = require('./styleToneCalibrator');
 const { clarityEdit } = require('./clarityConcisenessEditor');
+const { REVERSE_ORDER_MODE, REVERSE_ORDER_STEPS, reverseOrderWriter } = require('./reverseOrderWriter');
 
 module.exports = {
   MD_CODER_DIMENSIONS,
@@ -28,4 +29,7 @@ module.exports = {
   TONE_CATEGORY_PREFIXES,
   calibrateStyle,
   clarityEdit,
+  REVERSE_ORDER_MODE,
+  REVERSE_ORDER_STEPS,
+  reverseOrderWriter,
 };
