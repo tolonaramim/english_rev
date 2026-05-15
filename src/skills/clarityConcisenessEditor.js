@@ -32,11 +32,29 @@ const CLICHE_REPLACEMENTS = [
 
 const FILLER_WORDS = ['actually', 'basically', 'really', 'very', 'quite'];
 
-const normalizeWhitespace = (text) =>
-  text
-    .replace(/\s+/g, ' ')
-    .replace(/\s+([.!?])/g, '$1')
-    .trim();
+const normalizeWhitespace = (text) => {
+  const input = String(text);
+  let output = '';
+  let lastWasSpace = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    if (/\s/.test(char)) {
+      if (!lastWasSpace) {
+        output += ' ';
+        lastWasSpace = true;
+      }
+    } else {
+      if (lastWasSpace && /[.!?]/.test(char)) {
+        output = output.slice(0, -1);
+      }
+      output += char;
+      lastWasSpace = false;
+    }
+  }
+
+  return output.trim();
+};
 
 const isRegularPastParticiple = (word) => word.toLowerCase().endsWith('ed');
 

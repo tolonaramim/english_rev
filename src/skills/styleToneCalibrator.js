@@ -133,8 +133,8 @@ const calibrateStyle = (
   { style = STYLE_LEVELS.formal, tone = 'objective', toneProfile } = {},
 ) => {
   const styled = applyStyle(text, style);
-  const toned = applyTone(styled.trim(), tone, toneProfile);
-  return toned.trim();
+  const tonedText = applyTone(styled.trim(), tone, toneProfile);
+  return tonedText.trim();
 };
 
 module.exports = {

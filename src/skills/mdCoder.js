@@ -101,6 +101,9 @@ const normalizeTopicTerms = (terms) => {
 };
 
 const formatTopicList = (terms) => {
+  if (!terms.length) {
+    return '';
+  }
   if (terms.length === 1) {
     return terms[0];
   }

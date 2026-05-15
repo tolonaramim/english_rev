@@ -2,7 +2,7 @@ const { splitIntoSentences } = require('../utils/text');
 
 const sentenceMatches = (text) => splitIntoSentences(text);
 
-const toInteger = (value) => {
+const parseInteger = (value) => {
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) {
     return null;
@@ -17,8 +17,8 @@ const resolveBoundaries = (sentences, boundaries = {}) => {
   const defaultBeginnerEnd = 1;
   const defaultDeveloperEnd = Math.max(defaultBeginnerEnd, total - 1);
 
-  const rawBeginnerEnd = toInteger(boundaries.beginnerEnd);
-  const rawDeveloperEnd = toInteger(boundaries.developerEnd);
+  const rawBeginnerEnd = parseInteger(boundaries.beginnerEnd);
+  const rawDeveloperEnd = parseInteger(boundaries.developerEnd);
 
   const beginnerEnd = clamp(rawBeginnerEnd ?? defaultBeginnerEnd, 1, total);
   const developerEnd = clamp(rawDeveloperEnd ?? defaultDeveloperEnd, beginnerEnd, total);
