@@ -119,14 +119,34 @@ const splitLongSentences = (text) =>
     .map((sentence) => splitLongSentence(sentence))
     .join(' ');
 
-const clarityEdit = (text = '') => {
+const clarityEdit = (text = '', options = {}) => {
+  const {
+    convertPassive = true,
+    replacePhrases = true,
+    replaceTautologies = true,
+    replaceCliches = true,
+    removeFillers: stripFillers = true,
+    splitLong = true,
+  } = options;
   let output = String(text);
-  output = convertPassiveVoice(output);
-  output = replaceByPatterns(output, PHRASE_REPLACEMENTS);
-  output = replaceByPatterns(output, TAUTOLOGY_REPLACEMENTS);
-  output = replaceByPatterns(output, CLICHE_REPLACEMENTS);
-  output = removeFillers(output);
-  output = splitLongSentences(output);
+  if (convertPassive) {
+    output = convertPassiveVoice(output);
+  }
+  if (replacePhrases) {
+    output = replaceByPatterns(output, PHRASE_REPLACEMENTS);
+  }
+  if (replaceTautologies) {
+    output = replaceByPatterns(output, TAUTOLOGY_REPLACEMENTS);
+  }
+  if (replaceCliches) {
+    output = replaceByPatterns(output, CLICHE_REPLACEMENTS);
+  }
+  if (stripFillers) {
+    output = removeFillers(output);
+  }
+  if (splitLong) {
+    output = splitLongSentences(output);
+  }
   return normalizeWhitespace(output);
 };
 

@@ -2,8 +2,33 @@ const { splitIntoSentences } = require('../utils/text');
 
 const sentenceMatches = (text) => splitIntoSentences(text);
 
+const toInteger = (value) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return Math.trunc(parsed);
+};
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+const resolveBoundaries = (sentences, boundaries = {}) => {
+  const total = sentences.length;
+  const defaultBeginnerEnd = 1;
+  const defaultDeveloperEnd = Math.max(defaultBeginnerEnd, total - 1);
+
+  const rawBeginnerEnd = toInteger(boundaries.beginnerEnd);
+  const rawDeveloperEnd = toInteger(boundaries.developerEnd);
+
+  const beginnerEnd = clamp(rawBeginnerEnd ?? defaultBeginnerEnd, 1, total);
+  const developerEnd = clamp(rawDeveloperEnd ?? defaultDeveloperEnd, beginnerEnd, total);
+
+  return { beginnerEnd, developerEnd };
+};
+
 const bdtFormat = (text, options = {}) => {
   const includeLabels = options.includeLabels !== false;
+  const boundaries = options.boundaries || {};
   const sentences = sentenceMatches(text).map((sentence) => sentence.trim());
 
   if (!sentences.length) {
@@ -15,9 +40,10 @@ const bdtFormat = (text, options = {}) => {
     };
   }
 
-  const beginner = sentences[0];
-  const terminator = sentences.length > 1 ? sentences[sentences.length - 1] : '';
-  const developer = sentences.length > 2 ? sentences.slice(1, -1).join(' ') : '';
+  const { beginnerEnd, developerEnd } = resolveBoundaries(sentences, boundaries);
+  const beginner = sentences.slice(0, beginnerEnd).join(' ');
+  const developer = sentences.slice(beginnerEnd, developerEnd).join(' ');
+  const terminator = sentences.slice(developerEnd).join(' ');
 
   const formatted = includeLabels
     ? [
