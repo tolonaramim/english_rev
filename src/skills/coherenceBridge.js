@@ -9,13 +9,13 @@ const TRANSITION_METHODS = {
 
 const formatBackward = (topic) => `Building on ${topic}, here is the next step.`;
 const formatForward = (topic) => `Next, we will move to ${topic}.`;
+const hasContent = (value) => (typeof value === 'string' ? value.trim().length > 0 : Boolean(value));
 
 const coherenceBridge = ({ previousTopic, nextTopic, method = TRANSITION_METHODS.auto } = {}) => {
   const trimmedPrevious = typeof previousTopic === 'string' ? previousTopic.trim() : previousTopic;
   const trimmedNext = typeof nextTopic === 'string' ? nextTopic.trim() : nextTopic;
-  const hasPrevious =
-    typeof trimmedPrevious === 'string' ? trimmedPrevious.length > 0 : Boolean(trimmedPrevious);
-  const hasNext = typeof trimmedNext === 'string' ? trimmedNext.length > 0 : Boolean(trimmedNext);
+  const hasPrevious = hasContent(trimmedPrevious);
+  const hasNext = hasContent(trimmedNext);
   let resolvedMethod = method;
 
   if (method === TRANSITION_METHODS.auto) {
