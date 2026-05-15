@@ -1,29 +1,6 @@
-const sentenceMatches = (text) => {
-  if (!text) {
-    return [];
-  }
+const { splitIntoSentences } = require('../utils/text');
 
-  const normalized = String(text).trim();
-  const sentences = [];
-  let buffer = '';
-
-  for (const char of normalized) {
-    buffer += char;
-    if ('.!?'.includes(char)) {
-      const trimmed = buffer.trim();
-      if (trimmed) {
-        sentences.push(trimmed);
-      }
-      buffer = '';
-    }
-  }
-
-  if (buffer.trim()) {
-    sentences.push(buffer.trim());
-  }
-
-  return sentences;
-};
+const sentenceMatches = (text) => splitIntoSentences(text);
 
 const bdtFormat = (text, options = {}) => {
   const includeLabels = options.includeLabels !== false;

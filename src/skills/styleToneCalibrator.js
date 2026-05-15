@@ -28,26 +28,13 @@ const CONTRACTION_EXPANSIONS = {
   "wouldn't": 'would not',
 };
 
-const CONTRACTION_FORMS = {
-  'do not': "don't",
-  'does not': "doesn't",
-  'did not': "didn't",
-  'is not': "isn't",
-  'are not': "aren't",
-  'was not': "wasn't",
-  'were not': "weren't",
-  'it is': "it's",
-  'I am': "I'm",
-  'you are': "you're",
-  'we are': "we're",
-  'they are': "they're",
-  'there is': "there's",
-  'that is': "that's",
-  'cannot': "can't",
-  'could not': "couldn't",
-  'should not': "shouldn't",
-  'would not': "wouldn't",
-};
+const CONTRACTION_FORMS = Object.entries(CONTRACTION_EXPANSIONS).reduce(
+  (accumulator, [contraction, expansion]) => {
+    accumulator[expansion] = contraction;
+    return accumulator;
+  },
+  {},
+);
 
 const STYLE_LEVELS = {
   formal: 'formal',
@@ -89,10 +76,6 @@ const applyStyle = (text, style) => {
 
 const applyTone = (text, tone) => {
   const prefix = TONE_PREFIXES[tone] ?? '';
-  if (!prefix) {
-    return text;
-  }
-
   return `${prefix}${text}`;
 };
 
