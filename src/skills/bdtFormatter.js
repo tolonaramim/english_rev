@@ -17,11 +17,19 @@ const resolveBoundaries = (sentences, boundaries = {}) => {
   const defaultBeginnerEnd = 1;
   const defaultDeveloperEnd = Math.max(defaultBeginnerEnd, total - 1);
 
-  const rawBeginnerEnd = parseInteger(boundaries.beginnerEnd);
-  const rawDeveloperEnd = parseInteger(boundaries.developerEnd);
+  const parsedBeginnerEnd = parseInteger(boundaries.beginnerEnd);
+  const parsedDeveloperEnd = parseInteger(boundaries.developerEnd);
 
-  const beginnerEnd = clamp(rawBeginnerEnd ?? defaultBeginnerEnd, 1, total);
-  const developerEnd = clamp(rawDeveloperEnd ?? defaultDeveloperEnd, beginnerEnd, total);
+  const beginnerEnd = clamp(
+    parsedBeginnerEnd === null ? defaultBeginnerEnd : parsedBeginnerEnd,
+    1,
+    total,
+  );
+  const developerEnd = clamp(
+    parsedDeveloperEnd === null ? defaultDeveloperEnd : parsedDeveloperEnd,
+    beginnerEnd,
+    total,
+  );
 
   return { beginnerEnd, developerEnd };
 };

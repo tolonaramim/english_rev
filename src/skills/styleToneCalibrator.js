@@ -79,19 +79,23 @@ const buildToneProfilePrefix = (toneProfile) => {
     return '';
   }
 
-  return Object.entries(toneProfile).reduce((prefix, [category, value]) => {
+  const parts = [];
+
+  Object.entries(toneProfile).forEach(([category, value]) => {
     if (!value) {
-      return prefix;
+      return;
     }
     const categoryMap = TONE_CATEGORY_PREFIXES[category];
     if (categoryMap && categoryMap[value]) {
-      return `${prefix}${categoryMap[value]}`;
+      parts.push(categoryMap[value]);
+      return;
     }
     if (typeof value === 'string') {
-      return `${prefix}${value.endsWith(' ') ? value : `${value} `}`;
+      parts.push(value.endsWith(' ') ? value : `${value} `);
     }
-    return prefix;
-  }, '');
+  });
+
+  return parts.join('');
 };
 
 const applyStyle = (text, style) => {

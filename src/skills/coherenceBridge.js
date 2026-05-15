@@ -70,8 +70,7 @@ const pickTemplate = (templates = [], markerIndex = 0) => {
   if (!templates.length) {
     return null;
   }
-  const normalizedIndex = markerIndex % templates.length;
-  const safeIndex = normalizedIndex < 0 ? templates.length + normalizedIndex : normalizedIndex;
+  const safeIndex = ((markerIndex % templates.length) + templates.length) % templates.length;
   return templates[safeIndex];
 };
 
