@@ -2,7 +2,7 @@ const TRANSITION_METHODS = {
   backward: 'backward',
   forward: 'forward',
   mediate: 'mediate',
-  bothWay: 'both-way',
+  bothWay: 'bothWay',
   none: 'none',
   auto: 'auto',
 };
@@ -13,8 +13,9 @@ const formatForward = (topic) => `Next, we will move to ${topic}.`;
 const coherenceBridge = ({ previousTopic, nextTopic, method = TRANSITION_METHODS.auto } = {}) => {
   const trimmedPrevious = typeof previousTopic === 'string' ? previousTopic.trim() : previousTopic;
   const trimmedNext = typeof nextTopic === 'string' ? nextTopic.trim() : nextTopic;
-  const hasPrevious = Boolean(trimmedPrevious);
-  const hasNext = Boolean(trimmedNext);
+  const hasPrevious =
+    typeof trimmedPrevious === 'string' ? trimmedPrevious.length > 0 : Boolean(trimmedPrevious);
+  const hasNext = typeof trimmedNext === 'string' ? trimmedNext.length > 0 : Boolean(trimmedNext);
   let resolvedMethod = method;
 
   if (method === TRANSITION_METHODS.auto) {
