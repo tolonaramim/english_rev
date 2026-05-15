@@ -2,11 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 const BOOK_TEXT_PATH = path.join(__dirname, 'bookText.txt');
+const EXCERPT_LENGTH = 360;
+const EXCERPT_CONTEXT = 120;
 let BOOK_TEXT = '';
 
 try {
   BOOK_TEXT = fs.readFileSync(BOOK_TEXT_PATH, 'utf8');
 } catch (error) {
+  console.warn(
+    `[bookContent] Unable to read book text from ${BOOK_TEXT_PATH}: ${error.message}`,
+  );
   BOOK_TEXT = '';
 }
 
@@ -27,11 +32,11 @@ const BOOK_PAGES = BOOK_TEXT.split('\f')
 
 const normalize = (value) => normalizeWhitespace(value).toLowerCase();
 
-const buildExcerpt = (text, index, length = 360) => {
+const buildExcerpt = (text, index, length = EXCERPT_LENGTH) => {
   if (index < 0) {
     return '';
   }
-  const start = Math.max(0, index - 120);
+  const start = Math.max(0, index - EXCERPT_CONTEXT);
   const end = Math.min(text.length, index + length);
   let excerpt = text.slice(start, end).trim();
   if (start > 0) {

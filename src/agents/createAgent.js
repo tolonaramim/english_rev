@@ -25,6 +25,16 @@ const resolveMode = (mode) => {
   return match ? match.name : mode;
 };
 
+const resolveOutputDraft = ({ draftCandidate, essayCandidate, isReverseOrder }) => {
+  if (draftCandidate) {
+    return draftCandidate;
+  }
+  if (isReverseOrder) {
+    return essayCandidate;
+  }
+  return '';
+};
+
 const createAgent = ({ name, defaults = {} } = {}) => {
   const resolvedDefaults = {
     ...DEFAULTS,
@@ -65,7 +75,7 @@ const createAgent = ({ name, defaults = {} } = {}) => {
 
     const draftCandidate = typeof draft === 'string' ? draft : '';
     const essayCandidate = typeof essay === 'string' ? essay : '';
-    let output = draftCandidate || (isReverseOrder ? essayCandidate : '');
+    let output = resolveOutputDraft({ draftCandidate, essayCandidate, isReverseOrder });
     let sections = null;
     const reverseOrder = isReverseOrder
       ? reverseOrderWriter({
