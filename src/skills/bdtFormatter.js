@@ -16,7 +16,7 @@ const bdtFormat = (text, options = {}) => {
   }
 
   const beginner = sentences[0];
-  const terminator = sentences.length > 1 ? sentences[sentences.length - 1] : sentences[0];
+  const terminator = sentences.length > 1 ? sentences[sentences.length - 1] : '';
   const developer =
     sentences.length > 2
       ? sentences.slice(1, -1).join(' ')
@@ -28,7 +28,7 @@ const bdtFormat = (text, options = {}) => {
     ? [
         `Beginner: ${beginner}`,
         developer ? `Developer: ${developer}` : 'Developer: (add evidence, data, or examples here)',
-        `Terminator: ${terminator}`,
+        terminator ? `Terminator: ${terminator}` : 'Terminator: (add a concluding line)',
       ].join('\n')
     : [beginner, developer, terminator].filter(Boolean).join('\n\n');
 

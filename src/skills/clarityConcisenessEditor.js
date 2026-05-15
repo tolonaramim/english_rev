@@ -1,5 +1,6 @@
 const { splitIntoSentences } = require('../utils/text');
 
+const MAX_SENTENCE_LENGTH = 160;
 const BE_FORMS = ['is', 'are', 'was', 'were', 'be', 'been', 'being'];
 const IRREGULAR_PARTICIPLES = new Set([
   'written',
@@ -112,7 +113,7 @@ const convertPassiveSentence = (sentence) => {
     return sentence;
   }
 
-  return `${agent} ${participle} ${subject}${punctuation}`.trim();
+  return `${agent} ${verbSegment} ${subject}${punctuation}`.trim();
 };
 
 const convertPassiveVoice = (text) =>
@@ -128,7 +129,7 @@ const removeFillers = (text) => {
   return text.replace(regex, '').replace(/\s{2,}/g, ' ');
 };
 
-const splitLongSentence = (sentence, limit = 160) => {
+const splitLongSentence = (sentence, limit = MAX_SENTENCE_LENGTH) => {
   if (sentence.length <= limit) {
     return sentence;
   }
