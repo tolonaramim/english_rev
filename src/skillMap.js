@@ -10,7 +10,7 @@ const SKILL_MAP = [
     name: 'Idea Development and Thought Planning',
     items: [
       'how to start thinking',
-      'brainstorming (brain mapping)',
+      'brainstorming or brain mapping',
       'idea boosters',
       'advanced thinking techniques',
       'profound idea sources',
