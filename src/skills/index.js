@@ -3,6 +3,7 @@ const { bdtFormat } = require('./bdtFormatter');
 const { TRANSITION_METHODS, coherenceBridge } = require('./coherenceBridge');
 const { STYLE_LEVELS, calibrateStyle } = require('./styleToneCalibrator');
 const { clarityEdit } = require('./clarityConcisenessEditor');
+const { REVERSE_ORDER_MODE, REVERSE_ORDER_STEPS, reverseOrderWriter } = require('./reverseOrderWriter');
 
 module.exports = {
   MD_CODER_DIMENSIONS,
@@ -14,4 +15,7 @@ module.exports = {
   STYLE_LEVELS,
   calibrateStyle,
   clarityEdit,
+  REVERSE_ORDER_MODE,
+  REVERSE_ORDER_STEPS,
+  reverseOrderWriter,
 };

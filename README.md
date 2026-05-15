@@ -27,6 +27,9 @@ The full skill map derived from the OCR extract is stored in `src/skillMap.js` a
 - The Real Birth of an Essay
 - The Paragraph: The Basic Unit of Composition
 - The Essay
+- Reverse Order Writing
+
+The OCR text of the full book lives in `src/content/bookText.txt`. You can access parsed pages and search helpers via `content.bookContent`.
 
 ## Agents
 
@@ -45,5 +48,23 @@ const result = agents.claude.run({
   nextTopic: 'team rituals',
 });
 
+console.log(result.output);
+```
+
+### Reverse-order workflow
+
+```js
+const { agents } = require('./src');
+
+const result = agents.claude.run({
+  mode: 'Reverse Order Writing',
+  topic: 'public speaking',
+  word: 'confidence',
+  sentence: 'Confidence helps speakers connect with their listeners.',
+  paragraph: 'Confidence builds trust and keeps attention focused on the message.',
+  essay: 'Confidence helps speakers connect with their listeners. It builds trust and keeps attention focused on the message.',
+});
+
+console.log(result.reverseOrder);
 console.log(result.output);
 ```
