@@ -55,7 +55,6 @@ const applyStyle = (text, style) => {
 
   if (style === STYLE_LEVELS.formal) {
     output = replaceWithMap(output, CONTRACTION_EXPANSIONS);
-    output = output.replace(/\byou\b/gi, 'the reader');
     output = output.replace(/!/g, '.');
   }
 

@@ -17,12 +17,7 @@ const bdtFormat = (text, options = {}) => {
 
   const beginner = sentences[0];
   const terminator = sentences.length > 1 ? sentences[sentences.length - 1] : '';
-  const developer =
-    sentences.length > 2
-      ? sentences.slice(1, -1).join(' ')
-      : sentences.length === 2
-        ? sentences[1]
-        : '';
+  const developer = sentences.length > 2 ? sentences.slice(1, -1).join(' ') : '';
 
   const formatted = includeLabels
     ? [

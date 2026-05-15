@@ -2,37 +2,6 @@ const { splitIntoSentences } = require('../utils/text');
 
 const MAX_SENTENCE_LENGTH = 160;
 const BE_FORMS = ['is', 'are', 'was', 'were', 'be', 'been', 'being'];
-const IRREGULAR_PARTICIPLES = new Set([
-  'written',
-  'taken',
-  'done',
-  'made',
-  'given',
-  'seen',
-  'known',
-  'found',
-  'built',
-  'left',
-  'sent',
-  'taught',
-  'thought',
-  'brought',
-  'caught',
-  'kept',
-  'held',
-  'felt',
-  'read',
-  'run',
-  'grown',
-  'cut',
-  'put',
-  'set',
-  'won',
-  'paid',
-  'told',
-  'said',
-  'sold',
-]);
 
 const PHRASE_REPLACEMENTS = [
   [/in order to/gi, 'to'],
@@ -61,7 +30,7 @@ const CLICHE_REPLACEMENTS = [
   [/the bottom line/gi, 'the main point'],
 ];
 
-const FILLER_WORDS = ['actually', 'basically', 'really', 'just', 'very', 'quite'];
+const FILLER_WORDS = ['actually', 'basically', 'really', 'very', 'quite'];
 
 const normalizeWhitespace = (text) =>
   text
@@ -69,10 +38,7 @@ const normalizeWhitespace = (text) =>
     .replace(/\s+([.!?])/g, '$1')
     .trim();
 
-const isPastParticiple = (word) => {
-  const lowered = word.toLowerCase();
-  return lowered.endsWith('ed') || IRREGULAR_PARTICIPLES.has(lowered);
-};
+const isRegularPastParticiple = (word) => word.toLowerCase().endsWith('ed');
 
 const convertPassiveSentence = (sentence) => {
   const lowered = sentence.toLowerCase();
@@ -102,7 +68,7 @@ const convertPassiveSentence = (sentence) => {
 
   const verbTokens = verbSegment.split(/\s+/);
   const participle = verbTokens[verbTokens.length - 1];
-  if (!participle || !isPastParticiple(participle)) {
+  if (!participle || !isRegularPastParticiple(participle)) {
     return sentence;
   }
 
