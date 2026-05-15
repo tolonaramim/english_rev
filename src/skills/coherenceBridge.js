@@ -7,14 +7,17 @@ const TRANSITION_METHODS = {
 const coherenceBridge = ({ previousTopic, nextTopic, method = TRANSITION_METHODS.auto } = {}) => {
   const hasPrevious = Boolean(previousTopic);
   const hasNext = Boolean(nextTopic);
-  const resolvedMethod =
-    method === TRANSITION_METHODS.auto
-      ? hasPrevious
-        ? TRANSITION_METHODS.backward
-        : hasNext
-          ? TRANSITION_METHODS.forward
-          : null
-      : method;
+  let resolvedMethod = method;
+
+  if (method === TRANSITION_METHODS.auto) {
+    if (hasPrevious) {
+      resolvedMethod = TRANSITION_METHODS.backward;
+    } else if (hasNext) {
+      resolvedMethod = TRANSITION_METHODS.forward;
+    } else {
+      resolvedMethod = null;
+    }
+  }
 
   if (!resolvedMethod) {
     return '';

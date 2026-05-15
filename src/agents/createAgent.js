@@ -5,10 +5,11 @@ const { coherenceBridge } = require('../skills/coherenceBridge');
 const { calibrateStyle } = require('../skills/styleToneCalibrator');
 const { clarityEdit } = require('../skills/clarityConcisenessEditor');
 
+const DEFAULT_MODE_INDEX = 0;
 const DEFAULTS = {
   style: 'formal',
   tone: 'objective',
-  mode: SKILL_MAP[0] ? SKILL_MAP[0].name : undefined,
+  mode: SKILL_MAP[DEFAULT_MODE_INDEX] ? SKILL_MAP[DEFAULT_MODE_INDEX].name : undefined,
 };
 
 const resolveMode = (mode) => {

@@ -1,5 +1,4 @@
-const PASSIVE_VOICE_REGEX =
-  /\b([^.!?]+?)\s+(is|are|was|were|be|been|being)\s+(\w+ed)\s+by\s+([^.!?]+?)([.!?]|$)/gi;
+const BE_FORMS = ['is', 'are', 'was', 'were', 'be', 'been', 'being'];
 
 const PHRASE_REPLACEMENTS = [
   [/in order to/gi, 'to'],
@@ -36,12 +35,75 @@ const normalizeWhitespace = (text) =>
     .replace(/\s+([.!?])/g, '$1')
     .trim();
 
+const splitIntoSentences = (text) => {
+  const normalized = String(text).trim();
+  const sentences = [];
+  let buffer = '';
+
+  for (const char of normalized) {
+    buffer += char;
+    if ('.!?'.includes(char)) {
+      const trimmed = buffer.trim();
+      if (trimmed) {
+        sentences.push(trimmed);
+      }
+      buffer = '';
+    }
+  }
+
+  if (buffer.trim()) {
+    sentences.push(buffer.trim());
+  }
+
+  return sentences;
+};
+
+const convertPassiveSentence = (sentence) => {
+  const lowered = sentence.toLowerCase();
+  const byIndex = lowered.lastIndexOf(' by ');
+  if (byIndex === -1) {
+    return sentence;
+  }
+
+  let beIndex = -1;
+  let beForm = '';
+  BE_FORMS.forEach((form) => {
+    const index = lowered.indexOf(` ${form} `);
+    if (index !== -1 && (beIndex === -1 || index < beIndex)) {
+      beIndex = index;
+      beForm = form;
+    }
+  });
+
+  if (beIndex === -1 || beIndex > byIndex) {
+    return sentence;
+  }
+
+  const subject = sentence.slice(0, beIndex).trim();
+  const verbSegment = sentence.slice(beIndex + beForm.length + 2, byIndex).trim();
+  const agentSegment = sentence.slice(byIndex + 4).trim();
+
+  const verbTokens = verbSegment.split(/\s+/);
+  const participle = verbTokens[verbTokens.length - 1];
+  if (!participle || !participle.toLowerCase().endsWith('ed')) {
+    return sentence;
+  }
+
+  const punctuationMatch = agentSegment.match(/([.!?])$/);
+  const punctuation = punctuationMatch ? punctuationMatch[1] : '';
+  const agent = punctuationMatch ? agentSegment.slice(0, -1).trim() : agentSegment;
+
+  if (!subject || !agent) {
+    return sentence;
+  }
+
+  return `${agent} ${participle} ${subject}${punctuation}`.trim();
+};
+
 const convertPassiveVoice = (text) =>
-  text.replace(
-    PASSIVE_VOICE_REGEX,
-    (_match, subject, _verb, participle, agent, punctuation) =>
-      `${agent.trim()} ${participle.trim()} ${subject.trim()}${punctuation || ''}`,
-  );
+  splitIntoSentences(text)
+    .map((sentence) => convertPassiveSentence(sentence))
+    .join(' ');
 
 const replaceByPatterns = (text, replacements) =>
   replacements.reduce((output, [pattern, replacement]) => output.replace(pattern, replacement), text);
@@ -56,17 +118,21 @@ const splitLongSentence = (sentence, limit = 160) => {
     return sentence;
   }
 
-  const parts = sentence.split(/,|;|:/).map((part) => part.trim()).filter(Boolean);
-  if (parts.length <= 1) {
+  const trimmed = sentence.trim();
+  const punctuationMatch = trimmed.match(/([.!?])$/);
+  const punctuation = punctuationMatch ? punctuationMatch[1] : '.';
+  const core = punctuationMatch ? trimmed.slice(0, -1) : trimmed;
+  const rewritten = core.replace(/[,;:]\s+/g, '. ').trim();
+
+  if (rewritten === core) {
     return sentence;
   }
 
-  return parts.map((part) => `${part}.`).join(' ');
+  return `${rewritten}${punctuation}`;
 };
 
 const splitLongSentences = (text) =>
-  text
-    .split(/(?<=[.!?])\s+/)
+  splitIntoSentences(text)
     .map((sentence) => splitLongSentence(sentence))
     .join(' ');
 
