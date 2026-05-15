@@ -5,31 +5,53 @@ const BOOK_TEXT_PATH = path.join(__dirname, 'bookText.txt');
 const PAGE_DELIMITER = '\f';
 const EXCERPT_LENGTH = 360;
 const EXCERPT_CONTEXT = 120;
-let BOOK_TEXT = '';
+const CACHE_LIMIT = 100;
 
-try {
-  BOOK_TEXT = fs.readFileSync(BOOK_TEXT_PATH, 'utf8');
-} catch (error) {
-  console.warn(
-    `[bookContent] Unable to read book text from ${BOOK_TEXT_PATH}: ${error.message}`,
-  );
-  BOOK_TEXT = '';
-}
+let bookTextCache = null;
+let bookPagesCache = null;
 
 const flattenWhitespace = (text) => String(text || '').replace(/\s+/g, ' ').trim();
 
-const BOOK_PAGES = BOOK_TEXT.split(PAGE_DELIMITER)
-  .map((pageText, index) => {
-    const cleaned = flattenWhitespace(pageText);
-    if (!cleaned) {
-      return null;
-    }
-    return {
-      page: index + 1,
-      text: cleaned,
-    };
-  })
-  .filter(Boolean);
+const readBookText = () => {
+  if (bookTextCache !== null) {
+    return bookTextCache;
+  }
+
+  try {
+    bookTextCache = fs.readFileSync(BOOK_TEXT_PATH, 'utf8');
+  } catch (error) {
+    console.warn(
+      `[bookContent] Unable to read book text from ${BOOK_TEXT_PATH}: ${error.message}`,
+    );
+    bookTextCache = '';
+  }
+
+  return bookTextCache;
+};
+
+const buildBookPages = () =>
+  readBookText()
+    .split(PAGE_DELIMITER)
+    .map((pageText, index) => {
+      const cleaned = flattenWhitespace(pageText);
+      if (!cleaned) {
+        return null;
+      }
+      return {
+        page: index + 1,
+        text: cleaned,
+      };
+    })
+    .filter(Boolean);
+
+const getBookText = () => readBookText();
+
+const getBookPages = () => {
+  if (!bookPagesCache) {
+    bookPagesCache = buildBookPages();
+  }
+  return bookPagesCache;
+};
 
 const BOOK_QUERY_CACHE = new Map();
 
@@ -64,7 +86,7 @@ const findBookMatches = (query, { limit = 3 } = {}) => {
 
   const matches = [];
 
-  for (const page of BOOK_PAGES) {
+  for (const page of getBookPages()) {
     const index = page.text.toLowerCase().indexOf(normalizedQuery);
     if (index === -1) {
       continue;
@@ -81,6 +103,11 @@ const findBookMatches = (query, { limit = 3 } = {}) => {
   }
 
   BOOK_QUERY_CACHE.set(cacheKey, matches);
+  if (BOOK_QUERY_CACHE.size > CACHE_LIMIT) {
+    const firstKey = BOOK_QUERY_CACHE.keys().next().value;
+    BOOK_QUERY_CACHE.delete(firstKey);
+  }
+
   return matches;
 };
 
@@ -89,7 +116,7 @@ const getBookContext = (queries = [], { limit = 3 } = {}) => {
   const normalizedQueries = list.map((query) => String(query || '').trim()).filter(Boolean);
 
   return {
-    totalPages: BOOK_PAGES.length,
+    totalPages: getBookPages().length,
     queries: normalizedQueries.map((query) => ({
       query,
       matches: findBookMatches(query, { limit }),
@@ -98,8 +125,11 @@ const getBookContext = (queries = [], { limit = 3 } = {}) => {
 };
 
 module.exports = {
-  BOOK_TEXT,
-  BOOK_PAGES,
+  getBookText,
+  getBookPages,
   findBookMatches,
   getBookContext,
 };
+
+Object.defineProperty(module.exports, 'BOOK_TEXT', { get: getBookText });
+Object.defineProperty(module.exports, 'BOOK_PAGES', { get: getBookPages });

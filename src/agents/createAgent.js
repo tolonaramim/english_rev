@@ -76,7 +76,8 @@ const createAgent = ({ name, defaults = {} } = {}) => {
 
     const draftCandidate = normalizeString(draft);
     const essayCandidate = normalizeString(essay);
-    let output = resolveOutputDraft({ draftCandidate, essayCandidate, isReverseOrder });
+    const rawOutput = resolveOutputDraft({ draftCandidate, essayCandidate, isReverseOrder });
+    let formattedOutput = rawOutput;
     let sections = null;
     const reverseOrder = isReverseOrder
       ? reverseOrderWriter({
@@ -89,22 +90,21 @@ const createAgent = ({ name, defaults = {} } = {}) => {
         })
       : null;
 
-    if (output) {
-      sections = bdtFormat(output, { includeLabels });
-      output = sections.formatted;
-      output = clarityEdit(output);
-        output = calibrateStyle(output, {
-          style: style || resolvedDefaults.style,
-          tone: tone || resolvedDefaults.tone,
-        });
-      }
+    if (rawOutput) {
+      sections = bdtFormat(rawOutput, { includeLabels });
+      formattedOutput = clarityEdit(sections.formatted);
+      formattedOutput = calibrateStyle(formattedOutput, {
+        style: style || resolvedDefaults.style,
+        tone: tone || resolvedDefaults.tone,
+      });
+    }
 
     return {
       mode: resolvedMode,
       analysis,
       transition,
       reverseOrder,
-      output,
+      output: formattedOutput,
       sections,
     };
   },

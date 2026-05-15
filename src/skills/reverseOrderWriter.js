@@ -22,7 +22,7 @@ const REVERSE_ORDER_STEPS = [
   {
     key: 'essay',
     label: 'Essay',
-    guidance: 'Grow the paragraph into a full essay with a beginning, middle, and ending.',
+    guidance: 'Grow the paragraph into a full essay with a beginning, middle, and end.',
   },
 ];
 
