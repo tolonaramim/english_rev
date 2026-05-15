@@ -64,16 +64,15 @@ const createAgent = ({ name, defaults = {} } = {}) => {
     });
 
     const draftCandidate = typeof draft === 'string' ? draft : '';
-    const essayCandidate =
-      !draftCandidate && isReverseOrder && typeof essay === 'string' ? essay : '';
-    let output = draftCandidate || essayCandidate;
+    const essayCandidate = typeof essay === 'string' ? essay : '';
+    let output = draftCandidate || (isReverseOrder ? essayCandidate : '');
     let sections = null;
     const reverseOrder = isReverseOrder
       ? reverseOrderWriter({
           word,
           sentence,
           paragraph,
-          essay: essayCandidate || essay,
+          essay: essayCandidate,
           topic,
           includeBookContext,
         })

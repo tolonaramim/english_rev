@@ -2,7 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 const BOOK_TEXT_PATH = path.join(__dirname, 'bookText.txt');
-const BOOK_TEXT = fs.readFileSync(BOOK_TEXT_PATH, 'utf8');
+let BOOK_TEXT = '';
+
+try {
+  BOOK_TEXT = fs.readFileSync(BOOK_TEXT_PATH, 'utf8');
+} catch (error) {
+  BOOK_TEXT = '';
+}
 
 const normalizeWhitespace = (text) => String(text || '').replace(/\s+/g, ' ').trim();
 
