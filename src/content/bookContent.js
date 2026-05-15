@@ -27,10 +27,11 @@ const BOOK_PAGES = BOOK_TEXT.split(PAGE_DELIMITER)
     return {
       page: index + 1,
       text: cleaned,
-      lowerText: cleaned.toLowerCase(),
     };
   })
   .filter(Boolean);
+
+const BOOK_QUERY_CACHE = new Map();
 
 const normalize = (value) => flattenWhitespace(value).toLowerCase();
 
@@ -56,10 +57,15 @@ const findBookMatches = (query, { limit = 3 } = {}) => {
     return [];
   }
 
+  const cacheKey = `${normalizedQuery}:${limit}`;
+  if (BOOK_QUERY_CACHE.has(cacheKey)) {
+    return BOOK_QUERY_CACHE.get(cacheKey);
+  }
+
   const matches = [];
 
   for (const page of BOOK_PAGES) {
-    const index = page.lowerText.indexOf(normalizedQuery);
+    const index = page.text.toLowerCase().indexOf(normalizedQuery);
     if (index === -1) {
       continue;
     }
@@ -74,6 +80,7 @@ const findBookMatches = (query, { limit = 3 } = {}) => {
     }
   }
 
+  BOOK_QUERY_CACHE.set(cacheKey, matches);
   return matches;
 };
 
