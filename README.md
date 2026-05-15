@@ -1,6 +1,6 @@
 # english_rev
 
-Skill repository for advanced writing/idea-planning agents (Claude and Antigravity). It encodes the OCR skill map and implements five programmable skills:
+Skill repository for advanced writing/idea-planning agents (Claude and Antigravity). It encodes the full book skill map and implements five programmable skills:
 
 - MD-CODER analytical skill
 - BDT Formatter (paragraph architect)
@@ -13,19 +13,19 @@ Skill repository for advanced writing/idea-planning agents (Claude and Antigravi
 The full skill map derived from the OCR extract is stored in `src/skillMap.js` and includes:
 
 - Purpose Planning
-- Idea Development & Thought Planning
+- Idea Development and Thought Planning
 - Attractive Beginning
 - Unforgettable Ending
 - Variety
-- Colorful & Lively Language
-- Conciseness & Simplicity
-- Directness & Clarity
-- Smooth Transition / Flow of Thought
+- Using Colorful and Lively Language
+- Conciseness and Simplicity
+- Directness and Clarity
+- Smooth Transition: Shiny Flow of Thought
 - Writing the Modern Way
 - Expressing Ideas the Right Way
-- Tone & Style
-- The Real Idea of an Essay
-- The Paragraph
+- Tone and Style
+- The Real Birth of an Essay
+- The Paragraph: The Basic Unit of Composition
 - The Essay
 
 ## Agents
