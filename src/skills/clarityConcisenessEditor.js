@@ -32,11 +32,29 @@ const CLICHE_REPLACEMENTS = [
 
 const FILLER_WORDS = ['actually', 'basically', 'really', 'very', 'quite'];
 
-const normalizeWhitespace = (text) =>
-  text
-    .replace(/\s+/g, ' ')
-    .replace(/\s+([.!?])/g, '$1')
-    .trim();
+const normalizeWhitespace = (text) => {
+  const input = String(text);
+  let output = '';
+  let lastWasSpace = false;
+
+  for (let index = 0; index < input.length; index += 1) {
+    const char = input[index];
+    if (/\s/.test(char)) {
+      if (!lastWasSpace) {
+        output += ' ';
+        lastWasSpace = true;
+      }
+    } else {
+      if (lastWasSpace && /[.!?]/.test(char)) {
+        output = output.slice(0, -1);
+      }
+      output += char;
+      lastWasSpace = false;
+    }
+  }
+
+  return output.trim();
+};
 
 const isRegularPastParticiple = (word) => word.toLowerCase().endsWith('ed');
 
@@ -119,14 +137,34 @@ const splitLongSentences = (text) =>
     .map((sentence) => splitLongSentence(sentence))
     .join(' ');
 
-const clarityEdit = (text = '') => {
+const clarityEdit = (text = '', options = {}) => {
+  const {
+    convertPassive = true,
+    replacePhrases = true,
+    replaceTautologies = true,
+    replaceCliches = true,
+    removeFillers: shouldRemoveFillers = true,
+    splitLong = true,
+  } = options;
   let output = String(text);
-  output = convertPassiveVoice(output);
-  output = replaceByPatterns(output, PHRASE_REPLACEMENTS);
-  output = replaceByPatterns(output, TAUTOLOGY_REPLACEMENTS);
-  output = replaceByPatterns(output, CLICHE_REPLACEMENTS);
-  output = removeFillers(output);
-  output = splitLongSentences(output);
+  if (convertPassive) {
+    output = convertPassiveVoice(output);
+  }
+  if (replacePhrases) {
+    output = replaceByPatterns(output, PHRASE_REPLACEMENTS);
+  }
+  if (replaceTautologies) {
+    output = replaceByPatterns(output, TAUTOLOGY_REPLACEMENTS);
+  }
+  if (replaceCliches) {
+    output = replaceByPatterns(output, CLICHE_REPLACEMENTS);
+  }
+  if (shouldRemoveFillers) {
+    output = removeFillers(output);
+  }
+  if (splitLong) {
+    output = splitLongSentences(output);
+  }
   return normalizeWhitespace(output);
 };
 

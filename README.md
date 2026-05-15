@@ -31,6 +31,8 @@ The full skill map derived from the OCR extract is stored in `src/skillMap.js` a
 
 The OCR text of the full book lives in `src/content/bookText.txt`. You can access parsed pages and search helpers via `content.bookContent`.
 
+Purpose Planning now enumerates checklist items (output type, reader, size/length, time limit, purpose, tone, style), and Idea Development includes expanded idea booster prompts (abilities/capabilities, characteristics, suggestions, dependency/differences/other relevant factors).
+
 ## Agents
 
 - `claude`: formal + objective defaults
@@ -50,6 +52,14 @@ const result = agents.claude.run({
 
 console.log(result.output);
 ```
+
+## Tool options
+
+- MD-CODER supports optional multi-term inputs via `topicTerms` (array or comma-separated string) to generate dependency, differences, and other-factor prompts alongside the core dimensions.
+- BDT Formatter accepts `boundaries: { beginnerEnd, developerEnd }` to allocate multiple sentences per section.
+- Coherence Bridge supports `markerSet` (`classic`, `markers`, `reference`) and optional `markerIndex` to select different transition marker styles.
+- Clarity & Conciseness Editor accepts toggles such as `convertPassive`, `replacePhrases`, and `replaceCliches` to control aggressive rewrites.
+- Style & Tone Calibrator accepts `toneProfile` with `subject`, `reader`, `self`, and `purpose` categories for tone profiling in addition to the existing `tone` presets.
 
 ### Reverse-order workflow
 

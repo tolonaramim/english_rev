@@ -50,6 +50,54 @@ const TONE_PREFIXES = {
   objective: '',
 };
 
+const TONE_CATEGORY_PREFIXES = {
+  subject: {
+    respectful: 'With respect to the subject, ',
+    critical: 'Critically, ',
+    appreciative: 'Appreciatively, ',
+    neutral: '',
+  },
+  reader: {
+    direct: 'For you, ',
+    inclusive: 'For the reader, ',
+    guiding: 'To guide the reader, ',
+  },
+  self: {
+    humble: 'From a humble perspective, ',
+    confident: 'With confidence, ',
+    reflective: 'In reflection, ',
+  },
+  purpose: {
+    inform: 'To inform, ',
+    persuade: 'To persuade, ',
+    reflect: 'To reflect, ',
+  },
+};
+
+const buildToneProfilePrefix = (toneProfile) => {
+  if (!toneProfile || typeof toneProfile !== 'object') {
+    return '';
+  }
+
+  const parts = [];
+
+  Object.entries(toneProfile).forEach(([category, value]) => {
+    if (!value) {
+      return;
+    }
+    const categoryMap = TONE_CATEGORY_PREFIXES[category];
+    if (categoryMap && categoryMap[value]) {
+      parts.push(categoryMap[value]);
+      return;
+    }
+    if (typeof value === 'string') {
+      parts.push(value.endsWith(' ') ? value : `${value} `);
+    }
+  });
+
+  return parts.join('');
+};
+
 const applyStyle = (text, style) => {
   let output = String(text || '');
 
@@ -73,18 +121,29 @@ const applyStyle = (text, style) => {
   return output;
 };
 
-const applyTone = (text, tone) => {
+const applyTone = (text, tone, toneProfile) => {
+  const resolvedProfile =
+    toneProfile || (tone && typeof tone === 'object' && !Array.isArray(tone) ? tone : null);
+  const profilePrefix = buildToneProfilePrefix(resolvedProfile);
+  if (profilePrefix) {
+    return `${profilePrefix}${text}`;
+  }
   const prefix = TONE_PREFIXES[tone] ?? '';
   return `${prefix}${text}`;
 };
 
-const calibrateStyle = (text, { style = STYLE_LEVELS.formal, tone = 'objective' } = {}) => {
+const calibrateStyle = (
+  text,
+  { style = STYLE_LEVELS.formal, tone = 'objective', toneProfile } = {},
+) => {
   const styled = applyStyle(text, style);
-  const toned = applyTone(styled.trim(), tone);
-  return toned.trim();
+  const tonedText = applyTone(styled.trim(), tone, toneProfile);
+  return tonedText.trim();
 };
 
 module.exports = {
   STYLE_LEVELS,
+  TONE_PREFIXES,
+  TONE_CATEGORY_PREFIXES,
   calibrateStyle,
 };
