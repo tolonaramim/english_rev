@@ -1,16 +1,28 @@
 const TRANSITION_METHODS = {
   backward: 'backward',
   forward: 'forward',
+  mediate: 'mediate',
+  bothWay: 'bothWay',
+  none: 'none',
   auto: 'auto',
 };
 
+const formatBackward = (topic) => `Building on ${topic}, here is the next step.`;
+const formatForward = (topic) => `Next, we will move to ${topic}.`;
+const hasValidContent = (value) =>
+  typeof value === 'string' ? value.trim().length > 0 : Boolean(value);
+
 const coherenceBridge = ({ previousTopic, nextTopic, method = TRANSITION_METHODS.auto } = {}) => {
-  const hasPrevious = Boolean(previousTopic);
-  const hasNext = Boolean(nextTopic);
+  const trimmedPrevious = typeof previousTopic === 'string' ? previousTopic.trim() : previousTopic;
+  const trimmedNext = typeof nextTopic === 'string' ? nextTopic.trim() : nextTopic;
+  const hasPrevious = hasValidContent(trimmedPrevious);
+  const hasNext = hasValidContent(trimmedNext);
   let resolvedMethod = method;
 
   if (method === TRANSITION_METHODS.auto) {
-    if (hasPrevious) {
+    if (hasPrevious && hasNext) {
+      resolvedMethod = TRANSITION_METHODS.bothWay;
+    } else if (hasPrevious) {
       resolvedMethod = TRANSITION_METHODS.backward;
     } else if (hasNext) {
       resolvedMethod = TRANSITION_METHODS.forward;
@@ -23,15 +35,22 @@ const coherenceBridge = ({ previousTopic, nextTopic, method = TRANSITION_METHODS
     return '';
   }
 
-  if (resolvedMethod === TRANSITION_METHODS.backward && hasPrevious) {
-    return `Building on ${previousTopic}, here is the next step.`;
+  switch (resolvedMethod) {
+    case TRANSITION_METHODS.none:
+      return '';
+    case TRANSITION_METHODS.backward:
+      return hasPrevious ? formatBackward(trimmedPrevious) : '';
+    case TRANSITION_METHODS.forward:
+      return hasNext ? formatForward(trimmedNext) : '';
+    case TRANSITION_METHODS.mediate:
+      return hasPrevious && hasNext ? `This point links ${trimmedPrevious} to ${trimmedNext}.` : '';
+    case TRANSITION_METHODS.bothWay:
+      return hasPrevious && hasNext
+        ? `Having wrapped up ${trimmedPrevious}, we can now proceed to ${trimmedNext}.`
+        : '';
+    default:
+      return '';
   }
-
-  if (resolvedMethod === TRANSITION_METHODS.forward && hasNext) {
-    return `Next, we will move to ${nextTopic}.`;
-  }
-
-  return '';
 };
 
 module.exports = {
