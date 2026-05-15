@@ -68,7 +68,7 @@ const applyStyle = (text, style) => {
     output = replaceWithMap(output, CONTRACTION_FORMS);
     output = output.replace(/\bthe reader\b/gi, 'you');
     output = output.replace(/;+/g, '.');
-    output = output.replace(/\.\s+/g, '. ');
+    output = output.replace(/\. {2,}/g, '. ');
   }
 
   return output;

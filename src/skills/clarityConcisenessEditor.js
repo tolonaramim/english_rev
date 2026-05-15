@@ -96,7 +96,8 @@ const convertPassiveSentence = (sentence) => {
   }
 
   const subject = sentence.slice(0, beIndex).trim();
-  const verbSegment = sentence.slice(beIndex + beForm.length + 2, byIndex).trim();
+  const beToken = ` ${beForm} `;
+  const verbSegment = sentence.slice(beIndex + beToken.length, byIndex).trim();
   const agentSegment = sentence.slice(byIndex + 4).trim();
 
   const verbTokens = verbSegment.split(/\s+/);
