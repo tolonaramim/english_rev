@@ -25,6 +25,9 @@ const splitIntoSentences = (text) => {
   return sentences;
 };
 
+const normalizeString = (value) => (typeof value === 'string' ? value.trim() : '');
+
 module.exports = {
   splitIntoSentences,
+  normalizeString,
 };

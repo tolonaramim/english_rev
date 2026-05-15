@@ -5,6 +5,7 @@ const { coherenceBridge } = require('../skills/coherenceBridge');
 const { calibrateStyle } = require('../skills/styleToneCalibrator');
 const { clarityEdit } = require('../skills/clarityConcisenessEditor');
 const { REVERSE_ORDER_MODE, reverseOrderWriter } = require('../skills/reverseOrderWriter');
+const { normalizeString } = require('../utils/text');
 
 const DEFAULT_MODE_INDEX = 0;
 const DEFAULTS = {
@@ -73,8 +74,8 @@ const createAgent = ({ name, defaults = {} } = {}) => {
       method: transitionMethod,
     });
 
-    const draftCandidate = typeof draft === 'string' ? draft : '';
-    const essayCandidate = typeof essay === 'string' ? essay : '';
+    const draftCandidate = normalizeString(draft);
+    const essayCandidate = normalizeString(essay);
     let output = resolveOutputDraft({ draftCandidate, essayCandidate, isReverseOrder });
     let sections = null;
     const reverseOrder = isReverseOrder

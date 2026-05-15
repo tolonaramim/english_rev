@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const BOOK_TEXT_PATH = path.join(__dirname, 'bookText.txt');
+const PAGE_DELIMITER = '\f';
 const EXCERPT_LENGTH = 360;
 const EXCERPT_CONTEXT = 120;
 let BOOK_TEXT = '';
@@ -15,22 +16,23 @@ try {
   BOOK_TEXT = '';
 }
 
-const normalizeWhitespace = (text) => String(text || '').replace(/\s+/g, ' ').trim();
+const flattenWhitespace = (text) => String(text || '').replace(/\s+/g, ' ').trim();
 
-const BOOK_PAGES = BOOK_TEXT.split('\f')
+const BOOK_PAGES = BOOK_TEXT.split(PAGE_DELIMITER)
   .map((pageText, index) => {
-    const cleaned = normalizeWhitespace(pageText);
+    const cleaned = flattenWhitespace(pageText);
     if (!cleaned) {
       return null;
     }
     return {
       page: index + 1,
       text: cleaned,
+      lowerText: cleaned.toLowerCase(),
     };
   })
   .filter(Boolean);
 
-const normalize = (value) => normalizeWhitespace(value).toLowerCase();
+const normalize = (value) => flattenWhitespace(value).toLowerCase();
 
 const buildExcerpt = (text, index, length = EXCERPT_LENGTH) => {
   if (index < 0) {
@@ -57,7 +59,7 @@ const findBookMatches = (query, { limit = 3 } = {}) => {
   const matches = [];
 
   for (const page of BOOK_PAGES) {
-    const index = page.text.toLowerCase().indexOf(normalizedQuery);
+    const index = page.lowerText.indexOf(normalizedQuery);
     if (index === -1) {
       continue;
     }

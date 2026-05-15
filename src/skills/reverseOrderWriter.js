@@ -1,4 +1,5 @@
 const { getBookContext } = require('../content/bookContent');
+const { normalizeString } = require('../utils/text');
 
 const REVERSE_ORDER_MODE = 'Reverse Order Writing';
 
@@ -43,11 +44,11 @@ const reverseOrderWriter = ({
   includeBookContext = true,
 } = {}) => {
   const inputs = {
-    topic: typeof topic === 'string' ? topic.trim() : topic,
-    word: typeof word === 'string' ? word.trim() : word,
-    sentence: typeof sentence === 'string' ? sentence.trim() : sentence,
-    paragraph: typeof paragraph === 'string' ? paragraph.trim() : paragraph,
-    essay: typeof essay === 'string' ? essay.trim() : essay,
+    topic: normalizeString(topic),
+    word: normalizeString(word),
+    sentence: normalizeString(sentence),
+    paragraph: normalizeString(paragraph),
+    essay: normalizeString(essay),
   };
 
   const steps = REVERSE_ORDER_STEPS.map((step) => ({
