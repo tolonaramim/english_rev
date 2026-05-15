@@ -143,7 +143,7 @@ const clarityEdit = (text = '', options = {}) => {
     replacePhrases = true,
     replaceTautologies = true,
     replaceCliches = true,
-    removeFillers: stripFillers = true,
+    removeFillers: shouldRemoveFillers = true,
     splitLong = true,
   } = options;
   let output = String(text);
@@ -159,7 +159,7 @@ const clarityEdit = (text = '', options = {}) => {
   if (replaceCliches) {
     output = replaceByPatterns(output, CLICHE_REPLACEMENTS);
   }
-  if (stripFillers) {
+  if (shouldRemoveFillers) {
     output = removeFillers(output);
   }
   if (splitLong) {
